@@ -42,6 +42,7 @@ public partial class MainWindowViewModel : ObservableObject
 
     public ICollectionView? FilteredEntries { get; private set; }
 
+    const string DialogFilters = "All Formats (*.pkgdef;*.json)|*.pkgdef;*.json|Registry Format (*.pkgdef)|*.pkgdef|JSON Format (*.json)|*.json";
 
     private ISnackbarService _snackbarService;
 
@@ -72,7 +73,7 @@ public partial class MainWindowViewModel : ObservableObject
         if (WorkingTheme is null || ThemeFilePath is null) return;
 
         var fileDialog = new Microsoft.Win32.SaveFileDialog();
-        fileDialog.Filter = "Registry Format (*.pkgdef)|*.pkgdef|JSON Format (*.json)|*.json";
+        fileDialog.Filter = DialogFilters;
         fileDialog.DefaultExt = Path.GetExtension(ThemeFilePath);
 
         if (fileDialog.ShowDialog() == true)
@@ -86,7 +87,7 @@ public partial class MainWindowViewModel : ObservableObject
                 break;
 
                 case ".json":
-                    var json = JsonSerializer.Serialize(WorkingTheme, new JsonSerializerOptions() { WriteIndented = true, IndentCharacter = '\t', IndentSize=1 });
+                    var json = JsonSerializer.Serialize(WorkingTheme, Json.Options);
                     File.WriteAllText(fileDialog.FileName, json);
                 break;
             }
@@ -100,7 +101,7 @@ public partial class MainWindowViewModel : ObservableObject
     {
         var fileDialog = new Microsoft.Win32.OpenFileDialog
         {
-            Filter = "Supported Formats (*.pkgdef;*.json)|*.pkgdef;*.json",
+            Filter = DialogFilters,
             Title = "Select a theme file"
         };
 
@@ -117,7 +118,7 @@ public partial class MainWindowViewModel : ObservableObject
 
                 case ".json":
                     var json = File.ReadAllText(fileDialog.FileName);
-                    WorkingTheme = JsonSerializer.Deserialize<Theme>(json);
+                    WorkingTheme = JsonSerializer.Deserialize<Theme>(json, Json.Options);
                 break;
             }
 
