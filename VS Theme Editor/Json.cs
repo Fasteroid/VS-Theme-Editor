@@ -16,14 +16,16 @@ namespace VS_Theme_Editor {
         {
             public override IList<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
             {
-                var dict = JsonSerializer.Deserialize< Dictionary<string, T> >(ref reader, options);
-                return dict!
-                    .Select( kv => { 
-                        kv.Value.Id = kv.Key;
-                        return kv.Value;
-                    })
-                    .ToList()
-                ;
+                var dict = JsonSerializer.Deserialize< Dictionary<string, T> >(ref reader, options)!;
+
+                var ret = (IList<T>)( typeToConvert.IsInterface ? new List<T>() : Activator.CreateInstance(typeToConvert)! );
+
+                foreach( (var k, var v) in dict ) {
+                    v.Id = k;
+                    ret.Add(v);
+                }
+
+                return ret;
             }
 
             public override void Write(Utf8JsonWriter writer, IList<T> value, JsonSerializerOptions options)
