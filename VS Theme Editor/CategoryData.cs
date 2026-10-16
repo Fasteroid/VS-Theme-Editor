@@ -19,18 +19,6 @@ public partial class CategoryData : ObservableObject, Json.IDictionaryable
     private string? name;
 
     [ObservableProperty]
-    private Int32 dataLength;
-
-    [ObservableProperty]
-    private Int32 headerLength;
-
-    [ObservableProperty]
-    private Int32 categoryCount;
-
-    [ObservableProperty]
-    private Int32 entryCount;
-
-    [ObservableProperty]
     private List<ThemeColorEntry> entries = new List<ThemeColorEntry>();
 
 }
